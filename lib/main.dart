@@ -48,7 +48,7 @@ class Root extends StatelessWidget {
             // Future with some errors
             else if (snapshot.connectionState == ConnectionState.done &&
                 snapshot.hasError) {
-              return Text("The error ${snapshot.error} occured");
+              return Text('The error ${snapshot.error} occured');
             }
 
             return const CircularProgressIndicator();

@@ -19,11 +19,14 @@ class GeoService extends GlobalService {
 
   Future<Weather?> fetchCurrentWeather(Coord coordinates) async {
     final response = await httpRequest(
-        HttpMethod.get, ApiVersion.v25, "/weather",
-        queryParameters: {
-          "lat": coordinates.lat.toString(),
-          "lon": coordinates.long.toString(),
-        });
+      HttpMethod.get,
+      ApiVersion.v25,
+      '/weather',
+      queryParameters: {
+        'lat': coordinates.lat.toString(),
+        'lon': coordinates.long.toString(),
+      },
+    );
 
     if (response.statusCode != 200) return null;
 

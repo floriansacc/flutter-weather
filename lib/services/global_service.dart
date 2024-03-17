@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_weather/shared/utils/logger.dart';
-import "package:http/http.dart" as http;
+import 'package:http/http.dart' as http;
 
 enum HttpMethod { get, post }
 
@@ -15,8 +15,8 @@ enum ApiVersion {
 }
 
 class GlobalService {
-  String get apiKey => dotenv.env["WEATHER_API_KEY"]!;
-  String get apiUrl => dotenv.env["WEATHER_API_URL"]!;
+  String get apiKey => dotenv.env['WEATHER_API_KEY']!;
+  String get apiUrl => dotenv.env['WEATHER_API_URL']!;
 
   Future<http.Response> httpRequest(
     HttpMethod method,
@@ -24,14 +24,15 @@ class GlobalService {
     String path, {
     Map<String, String>? queryParameters,
   }) async {
-    assert(path[0] == "/", 'path require a "/"');
+    assert(path[0] == '/', 'path require a "/"');
 
-    final Uri requestUrl =
-        Uri.parse('$apiUrl${version.version}$path').replace(queryParameters: {
-      "appid": apiKey,
-      "units": "metric",
-      ...queryParameters ?? {},
-    });
+    final Uri requestUrl = Uri.parse('$apiUrl${version.version}$path').replace(
+      queryParameters: {
+        'appid': apiKey,
+        'units': 'metric',
+        ...queryParameters ?? {},
+      },
+    );
 
     late http.Response response;
 

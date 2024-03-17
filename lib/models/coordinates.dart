@@ -5,6 +5,6 @@ class Coord {
   final double long;
 
   static Coord fromJson(Map<String, dynamic> json) {
-    return Coord(lat: json["lat"], long: json["lon"]);
+    return Coord(lat: json['lat'], long: json['lon']);
   }
 }

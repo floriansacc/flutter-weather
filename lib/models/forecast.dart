@@ -21,13 +21,14 @@ class Forecast {
 
   static Forecast fromJson(Map<String, dynamic> json) {
     return Forecast(
-        // sunrise: DateTime.fromMicrosecondsSinceEpoch(json["sunrise"]),
-        // sunset: DateTime.fromMicrosecondsSinceEpoch(json["sunset"]),
-        temp: json["temp"],
-        feelsLike: json["feels_like"],
-        humidity: json["humidity"],
-        tempMin: json["temp_min"],
-        tempMax: json["temp_max"]);
+      // sunrise: DateTime.fromMicrosecondsSinceEpoch(json["sunrise"]),
+      // sunset: DateTime.fromMicrosecondsSinceEpoch(json["sunset"]),
+      temp: json['temp'],
+      feelsLike: json['feels_like'],
+      humidity: json['humidity'],
+      tempMin: json['temp_min'],
+      tempMax: json['temp_max'],
+    );
   }
 }
 
@@ -42,12 +43,13 @@ class WeatherConditions {
 
   static WeatherConditions fromJson(Map<String, dynamic> json) {
     return WeatherConditions(
-      description: json["description"],
-      main: json["main"],
+      description: json['description'],
+      main: json['main'],
     );
   }
 
   static List<WeatherConditions> fromJsonList(List list) =>
+      // ignore: unnecessary_lambdas
       List<WeatherConditions>.from(list.map((e) => fromJson(e)));
 }
 
@@ -64,9 +66,9 @@ class Weather {
 
   static Weather fromJson(Map<String, dynamic> json) {
     return Weather(
-      forecast: Forecast.fromJson(json["main"]),
+      forecast: Forecast.fromJson(json['main']),
       conditions: WeatherConditions.fromJsonList(json['weather']),
-      coord: Coord.fromJson(json["coord"]),
+      coord: Coord.fromJson(json['coord']),
     );
   }
 }
