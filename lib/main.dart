@@ -33,16 +33,16 @@ class Root extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('Current weather')),
       body: Center(
-        child: FutureBuilder(
+        child: FutureBuilder<Weather?>(
           future: GeoService().fetchCurrentCoordWeather(),
-          builder: (BuildContext context, AsyncSnapshot<Forecast?> snapshot) {
-            final forecast = snapshot.data;
+          builder: (BuildContext context, AsyncSnapshot<Weather?> snapshot) {
+            final weather = snapshot.data;
 
             // Future done with no errors
             if (snapshot.connectionState == ConnectionState.done &&
                 !snapshot.hasError &&
-                forecast != null) {
-              return Text('${forecast.temp} celcius');
+                weather != null) {
+              return Text('${weather.forecast.temp} celcius');
             }
 
             // Future with some errors

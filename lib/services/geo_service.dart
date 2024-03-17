@@ -7,7 +7,7 @@ import 'package:flutter_weather/services/global_service.dart';
 import 'package:flutter_weather/shared/utils/logger.dart';
 
 class GeoService extends GlobalService {
-  Future<Forecast?> fetchCurrentCoordWeather() async {
+  Future<Weather?> fetchCurrentCoordWeather() async {
     try {
       final coord = await GeoLocator().getCoordinates();
       return fetchCurrentWeather(coord);
@@ -17,19 +17,19 @@ class GeoService extends GlobalService {
     }
   }
 
-  Future<Forecast?> fetchCurrentWeather(Coord coordinates) async {
+  Future<Weather?> fetchCurrentWeather(Coord coordinates) async {
     final response = await httpRequest(
-        HttpMethod.get, ApiVersion.v30, "/onecall",
+        HttpMethod.get, ApiVersion.v25, "/weather",
         queryParameters: {
           "lat": coordinates.lat.toString(),
-          "long": coordinates.long.toString(),
+          "lon": coordinates.long.toString(),
         });
 
     if (response.statusCode != 200) return null;
 
     try {
       final json = jsonDecode(response.body);
-      return Forecast.fromJson(json.current);
+      return Weather.fromJson(json);
     } catch (e) {
       errorLog(e);
       return null;
