@@ -1,4 +1,6 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_weather/shared/utils/logger.dart';
 import "package:http/http.dart" as http;
 
 enum HttpMethod { get, post }
@@ -20,7 +22,7 @@ class GlobalService {
     HttpMethod method,
     ApiVersion version,
     String path, {
-    Map<String, dynamic>? queryParameters,
+    Map<String, String>? queryParameters,
   }) async {
     assert(path[0] == "/", 'path require a "/"');
 
@@ -38,6 +40,21 @@ class GlobalService {
         response = await http.get(requestUrl);
       case HttpMethod.post:
         response = await http.post(requestUrl);
+    }
+
+    /// log request and error message
+    if (kDebugMode) {
+      String logMessage = 'Response.${method.toString()} << $requestUrl\n'
+          'Response.Code:${response.statusCode}\n'
+          '---------------------------------------------------';
+      if (response.statusCode != 200 &&
+          response.statusCode != 201 &&
+          response.statusCode != 202) {
+        // logMessage += '\nRequest.Body:$encodedBody';
+        logMessage += '\nResponse.Body:${response.body}\n'
+            '---------------------------------------------------';
+      }
+      logger.d(logMessage);
     }
 
     return response;

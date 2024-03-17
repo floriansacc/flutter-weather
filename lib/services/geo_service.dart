@@ -21,13 +21,18 @@ class GeoService extends GlobalService {
     final response = await httpRequest(
         HttpMethod.get, ApiVersion.v30, "/onecall",
         queryParameters: {
-          "lat": coordinates.lat,
-          "long": coordinates.long,
+          "lat": coordinates.lat.toString(),
+          "long": coordinates.long.toString(),
         });
 
     if (response.statusCode != 200) return null;
 
-    final json = jsonDecode(response.body);
-    return Forecast.fromJson(json.current);
+    try {
+      final json = jsonDecode(response.body);
+      return Forecast.fromJson(json.current);
+    } catch (e) {
+      errorLog(e);
+      return null;
+    }
   }
 }
