@@ -29,7 +29,7 @@ class GlobalService {
     final Uri requestUrl =
         Uri.parse('$apiUrl${version.version}$path').replace(queryParameters: {
       "appid": apiKey,
-      "unit": "metric",
+      "units": "metric",
       ...queryParameters ?? {},
     });
 
