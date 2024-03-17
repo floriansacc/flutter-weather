@@ -42,7 +42,14 @@ class Root extends StatelessWidget {
             if (snapshot.connectionState == ConnectionState.done &&
                 !snapshot.hasError &&
                 weather != null) {
-              return Text('${weather.forecast.temp} celcius');
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text('${weather.forecast.temp} celcius'),
+                  const SizedBox(width: 8),
+                  Icon(weather.conditions.first.type?.icon),
+                ],
+              );
             }
 
             // Future with some errors

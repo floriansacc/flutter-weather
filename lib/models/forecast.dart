@@ -1,4 +1,5 @@
 import 'package:flutter_weather/models/coordinates.dart';
+import 'package:flutter_weather/models/weather_condition.dart';
 
 class Forecast {
   const Forecast({
@@ -30,27 +31,6 @@ class Forecast {
       tempMax: json['temp_max'],
     );
   }
-}
-
-class WeatherConditions {
-  const WeatherConditions({
-    required this.main,
-    required this.description,
-  });
-
-  final String main;
-  final String description;
-
-  static WeatherConditions fromJson(Map<String, dynamic> json) {
-    return WeatherConditions(
-      description: json['description'],
-      main: json['main'],
-    );
-  }
-
-  static List<WeatherConditions> fromJsonList(List list) =>
-      // ignore: unnecessary_lambdas
-      List<WeatherConditions>.from(list.map((e) => fromJson(e)));
 }
 
 class Weather {
