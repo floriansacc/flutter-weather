@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_weather/models/forecast.dart';
+import 'package:flutter_weather/models/weather_condition.dart';
 import 'package:flutter_weather/services/geo_service.dart';
+import 'package:provider/provider.dart';
 
 void main() async {
   await dotenv.load(fileName: '.env');
@@ -14,14 +16,42 @@ class WeatherApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'WeatherApp',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
-        useMaterial3: true,
+    return ChangeNotifierProvider(
+      create: (context) => WeatherProvider(),
+      child: MaterialApp(
+        title: 'WeatherApp',
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
+          useMaterial3: true,
+        ),
+        home: const Root(),
       ),
-      home: const Root(),
     );
+  }
+}
+
+class WeatherProvider extends ChangeNotifier {
+  int _test = 0;
+
+  int get test => _test;
+
+  void increment() {
+    _test++;
+    notifyListeners();
+  }
+}
+
+class WeatherState extends StatefulWidget {
+  const WeatherState({super.key});
+
+  @override
+  State<WeatherState> createState() => _WeatherState();
+}
+
+class _WeatherState extends State<WeatherState> {
+  @override
+  Widget build(BuildContext context) {
+    return Container();
   }
 }
 
@@ -42,7 +72,7 @@ class Root extends StatelessWidget {
             if (snapshot.connectionState == ConnectionState.done &&
                 !snapshot.hasError &&
                 weather != null) {
-              return Row(
+              return Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text('${weather.forecast.temp} celcius'),
