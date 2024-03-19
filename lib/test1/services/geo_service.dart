@@ -1,10 +1,10 @@
 import 'dart:convert';
 
-import 'package:flutter_weather/models/coordinates.dart';
-import 'package:flutter_weather/models/forecast.dart';
-import 'package:flutter_weather/services/geo_locator.dart';
-import 'package:flutter_weather/services/global_service.dart';
-import 'package:flutter_weather/shared/utils/logger.dart';
+import 'package:flutter_weather/test1/models/coordinates.dart';
+import 'package:flutter_weather/test1/models/forecast.dart';
+import 'package:flutter_weather/test1/services/geo_locator.dart';
+import 'package:flutter_weather/test1/services/global_service.dart';
+import 'package:flutter_weather/test1/shared/utils/logger.dart';
 
 class GeoService extends GlobalService {
   Future<Weather?> fetchCurrentCoordWeather() async {

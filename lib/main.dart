@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:flutter_weather/features/screen/home_screen.dart';
-import 'package:flutter_weather/features/screen/location_screen.dart';
-import 'package:flutter_weather/models/menu_titles.dart';
+import 'package:flutter_weather/test1/screen/home_screen.dart';
+import 'package:flutter_weather/test1/screen/location_screen.dart';
+import 'package:flutter_weather/test1/screen/weather_screen.dart';
+import 'package:flutter_weather/test1/models/menu_titles.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
@@ -21,8 +23,9 @@ class WeatherApp extends StatelessWidget {
       child: MaterialApp(
         title: 'WeatherApp',
         theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.purple),
           useMaterial3: true,
+          iconTheme: IconThemeData(color: Colors.purple.shade700),
         ),
         home: const WeatherState(),
       ),
@@ -59,7 +62,7 @@ class _WeatherState extends State<WeatherState> {
     WeatherProvider appNotifier = context.watch<WeatherProvider>();
     return Scaffold(
       appBar: AppBar(
-        title: Text(appNotifier._appBarTitle),
+        title: Text(appNotifier.appBarTitle),
       ),
       drawer: const DrawerMenu(),
       body: LayoutBuilder(
@@ -69,6 +72,8 @@ class _WeatherState extends State<WeatherState> {
               return const HomeScreen();
             case 1:
               return const LocationScreenTest();
+            case 2:
+              return const WeatherScreen();
             default:
               return const Center(
                 child: Text('No screen'),
@@ -97,8 +102,14 @@ class DrawerMenu extends StatelessWidget {
           ),
           for (final MenuItems item in appNotifier.menuTitles.items)
             ListTile(
-              leading: Icon(item.icon),
-              title: Text(item.title),
+              leading: Icon(
+                item.icon,
+                color: Theme.of(context).iconTheme.color,
+              ),
+              title: Text(
+                item.title,
+                style: const TextStyle(fontSize: 16),
+              ),
               onTap: () {
                 appNotifier.changeIndex(item.index, item.title);
                 Navigator.pop(context);

@@ -34,14 +34,19 @@ class MenuTitles {
       index: 0,
     ),
     const MenuItems(
-      title: 'Location weather',
+      title: 'Weather Display Test',
       icon: Icons.location_on_outlined,
       index: 1,
     ),
     const MenuItems(
+      title: 'Location Weather',
+      icon: Icons.location_on_outlined,
+      index: 2,
+    ),
+    const MenuItems(
       title: '향후 업데이트',
       icon: Icons.construction,
-      index: 2,
+      index: 3,
     ),
   ];
 

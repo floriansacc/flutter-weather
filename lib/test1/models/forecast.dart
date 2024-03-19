@@ -1,5 +1,5 @@
-import 'package:flutter_weather/models/coordinates.dart';
-import 'package:flutter_weather/models/weather_condition.dart';
+import 'package:flutter_weather/test1/models/coordinates.dart';
+import 'package:flutter_weather/test1/models/weather_condition.dart';
 
 class Forecast {
   const Forecast({

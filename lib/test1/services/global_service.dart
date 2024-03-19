@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:flutter_weather/shared/utils/logger.dart';
+import 'package:flutter_weather/test1/shared/utils/logger.dart';
 import 'package:http/http.dart' as http;
 
 enum HttpMethod { get, post }

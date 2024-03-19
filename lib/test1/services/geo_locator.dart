@@ -1,4 +1,4 @@
-import 'package:flutter_weather/models/coordinates.dart';
+import 'package:flutter_weather/test1/models/coordinates.dart';
 import 'package:geolocator/geolocator.dart';
 
 class GeoLocator {

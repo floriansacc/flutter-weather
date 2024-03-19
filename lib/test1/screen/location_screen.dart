@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_weather/models/forecast.dart';
-import 'package:flutter_weather/services/geo_service.dart';
+import 'package:flutter_weather/test1/models/forecast.dart';
+import 'package:flutter_weather/test1/services/geo_service.dart';
 
 class LocationScreenTest extends StatelessWidget {
   const LocationScreenTest({super.key});
