@@ -7,19 +7,27 @@ class WeatherScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: GeoService().fetchCurrentCoordWeather(),
-      builder: (BuildContext context, AsyncSnapshot<Weather?> snapshot) {
-        final weather = snapshot.data;
+    return Center(
+      child: FutureBuilder(
+        future: GeoService().fetchCurrentCoordWeather(),
+        builder: (BuildContext context, AsyncSnapshot<Weather?> snapshot) {
+          final weather = snapshot.data;
 
-        if (!snapshot.hasData) {
-          return const CircularProgressIndicator();
-        } else if (snapshot.hasError) {
-          return const Text("Error while fetching");
-        } else {
-          return TemperatureContainer(weather: weather);
-        }
-      },
+          if (snapshot.connectionState == ConnectionState.done &&
+              !snapshot.hasError &&
+              weather != null) {
+            return TemperatureContainer(weather: weather);
+          } else if (snapshot.connectionState == ConnectionState.done &&
+              snapshot.hasError) {
+            return const Text('Error while fetching');
+          }
+          return const Center(
+            child: CircularProgressIndicator(
+              color: Colors.orange,
+            ),
+          );
+        },
+      ),
     );
   }
 }
@@ -27,10 +35,15 @@ class WeatherScreen extends StatelessWidget {
 class TemperatureContainer extends StatelessWidget {
   const TemperatureContainer({super.key, required this.weather});
 
-  final Weather? weather;
+  final Weather weather;
 
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text('${weather.forecast.temp}'),
+      ],
+    );
   }
 }

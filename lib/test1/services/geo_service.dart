@@ -38,4 +38,26 @@ class GeoService extends GlobalService {
       return null;
     }
   }
+
+  Future fetchfiveDaysWeather(Coord coord) async {
+    final response = await httpRequest(
+      HttpMethod.get,
+      ApiVersion.v25,
+      '/forecast',
+      queryParameters: {
+        'lat': coord.lat.toString(),
+        'lon': coord.long.toString(),
+      },
+    );
+
+    if (response.statusCode != 200) return null;
+
+    try {
+      final json = jsonDecode(response.body);
+      return Weather.fromJson(json); // TO MODIFY!!!!
+    } catch (e) {
+      errorLog(e);
+      return null;
+    }
+  }
 }
