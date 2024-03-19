@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:flutter_weather/models/forecast.dart';
-import 'package:flutter_weather/models/weather_condition.dart';
-import 'package:flutter_weather/services/geo_service.dart';
+import 'package:flutter_weather/features/screen/home_screen.dart';
+import 'package:flutter_weather/features/screen/location_screen.dart';
+import 'package:flutter_weather/models/menu_titles.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
@@ -24,19 +24,24 @@ class WeatherApp extends StatelessWidget {
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
           useMaterial3: true,
         ),
-        home: const Root(),
+        home: const WeatherState(),
       ),
     );
   }
 }
 
-class WeatherProvider extends ChangeNotifier {
-  int _test = 0;
+class WeatherProvider with ChangeNotifier {
+  int _selectedIndex = 0;
+  String _appBarTitle = 'Home';
 
-  int get test => _test;
+  int get selectedIndex => _selectedIndex;
+  String get appBarTitle => _appBarTitle;
 
-  void increment() {
-    _test++;
+  final MenuTitles menuTitles = const MenuTitles();
+
+  void changeIndex(int value, String title) {
+    _selectedIndex = value;
+    _appBarTitle = title;
     notifyListeners();
   }
 }
@@ -51,46 +56,62 @@ class WeatherState extends StatefulWidget {
 class _WeatherState extends State<WeatherState> {
   @override
   Widget build(BuildContext context) {
-    return Container();
+    WeatherProvider appNotifier = context.watch<WeatherProvider>();
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('${appNotifier._appBarTitle}'),
+      ),
+      drawer: const DrawerMenu(),
+      body: LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints constraints) {
+          switch (appNotifier.selectedIndex) {
+            case 0:
+              return const HomeScreen();
+            case 1:
+              return const LocationScreen();
+            default:
+              return const Center(
+                child: Text('No screen'),
+              );
+          }
+        },
+      ),
+    );
   }
 }
 
-class Root extends StatelessWidget {
-  const Root({super.key});
+class DrawerMenu extends StatelessWidget {
+  const DrawerMenu({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Current weather')),
-      body: Center(
-        child: FutureBuilder<Weather?>(
-          future: GeoService().fetchCurrentCoordWeather(),
-          builder: (BuildContext context, AsyncSnapshot<Weather?> snapshot) {
-            final weather = snapshot.data;
-
-            // Future done with no errors
-            if (snapshot.connectionState == ConnectionState.done &&
-                !snapshot.hasError &&
-                weather != null) {
-              return Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text('${weather.forecast.temp} celcius'),
-                  const SizedBox(width: 8),
-                  Icon(weather.conditions.first.type?.icon),
-                ],
-              );
-            }
-
-            // Future with some errors
-            else if (snapshot.connectionState == ConnectionState.done &&
-                snapshot.hasError) {
-              return Text('The error ${snapshot.error} occured');
-            }
-
-            return const CircularProgressIndicator();
-          },
-        ),
+    WeatherProvider appNotifier = context.watch<WeatherProvider>();
+    return Drawer(
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: [
+          const SizedBox(
+            child: DrawerHeader(
+              child: Text('Weather App'),
+            ),
+          ),
+          ListTile(
+            leading: const Icon(Icons.cloud),
+            title: Text(appNotifier.menuTitles.home),
+            onTap: () {
+              appNotifier.changeIndex(1, appNotifier.menuTitles.home);
+              Navigator.pop(context);
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.sunny),
+            title: Text(appNotifier.menuTitles.location),
+            onTap: () {
+              appNotifier.changeIndex(2, appNotifier.menuTitles.location);
+              Navigator.pop(context);
+            },
+          ),
+        ],
       ),
     );
   }

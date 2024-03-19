@@ -24,11 +24,11 @@ class Forecast {
     return Forecast(
       // sunrise: DateTime.fromMicrosecondsSinceEpoch(json["sunrise"]),
       // sunset: DateTime.fromMicrosecondsSinceEpoch(json["sunset"]),
-      temp: json['temp'],
-      feelsLike: json['feels_like'],
-      humidity: json['humidity'],
-      tempMin: json['temp_min'],
-      tempMax: json['temp_max'],
+      temp: json['temp'] ?? 0,
+      feelsLike: json['feels_like'] ?? 0,
+      humidity: json['humidity'] ?? 0,
+      tempMin: json['temp_min'] ?? 0,
+      tempMax: json['temp_max'] ?? 0,
     );
   }
 }
