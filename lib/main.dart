@@ -37,10 +37,10 @@ class WeatherProvider with ChangeNotifier {
   int get selectedIndex => _selectedIndex;
   String get appBarTitle => _appBarTitle;
 
-  final MenuTitles menuTitles = const MenuTitles();
+  final MenuTitles menuTitles = MenuTitles(items: MenuTitles.defaultItems);
 
-  void changeIndex(int value, String title) {
-    _selectedIndex = value;
+  void changeIndex(int index, String title) {
+    _selectedIndex = index;
     _appBarTitle = title;
     notifyListeners();
   }
@@ -59,7 +59,7 @@ class _WeatherState extends State<WeatherState> {
     WeatherProvider appNotifier = context.watch<WeatherProvider>();
     return Scaffold(
       appBar: AppBar(
-        title: Text('${appNotifier._appBarTitle}'),
+        title: Text(appNotifier._appBarTitle),
       ),
       drawer: const DrawerMenu(),
       body: LayoutBuilder(
@@ -68,7 +68,7 @@ class _WeatherState extends State<WeatherState> {
             case 0:
               return const HomeScreen();
             case 1:
-              return const LocationScreen();
+              return const LocationScreenTest();
             default:
               return const Center(
                 child: Text('No screen'),
@@ -95,24 +95,50 @@ class DrawerMenu extends StatelessWidget {
               child: Text('Weather App'),
             ),
           ),
-          ListTile(
-            leading: const Icon(Icons.cloud),
-            title: Text(appNotifier.menuTitles.home),
-            onTap: () {
-              appNotifier.changeIndex(1, appNotifier.menuTitles.home);
-              Navigator.pop(context);
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.sunny),
-            title: Text(appNotifier.menuTitles.location),
-            onTap: () {
-              appNotifier.changeIndex(2, appNotifier.menuTitles.location);
-              Navigator.pop(context);
-            },
-          ),
+          for (final MenuItems item in appNotifier.menuTitles.items)
+            ListTile(
+              leading: Icon(item.icon),
+              title: Text(item.title),
+              onTap: () {
+                appNotifier.changeIndex(item.index, item.title);
+                Navigator.pop(context);
+              },
+            ),
         ],
       ),
     );
   }
 }
+
+// class Test extends StatelessWidget {
+//   const Test({
+//     super.key,
+//     required this.appNotifier,
+//   });
+
+//   final WeatherProvider appNotifier;
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Column(
+//       children: [
+//         ListTile(
+//           leading: const Icon(Icons.cloud),
+//           title: Text(appNotifier.menuTitles.items[0].title),
+//           onTap: () {
+//             appNotifier.changeIndex(0, appNotifier.menuTitles.items[0].title);
+//             Navigator.pop(context);
+//           },
+//         ),
+//         ListTile(
+//           leading: const Icon(Icons.sunny),
+//           title: Text(appNotifier.menuTitles.items[1].title),
+//           onTap: () {
+//             appNotifier.changeIndex(1, appNotifier.menuTitles.items[1].title);
+//             Navigator.pop(context);
+//           },
+//         ),
+//       ],
+//     );
+//   }
+// }

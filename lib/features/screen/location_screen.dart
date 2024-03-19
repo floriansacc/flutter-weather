@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_weather/models/forecast.dart';
 import 'package:flutter_weather/services/geo_service.dart';
 
-class LocationScreen extends StatelessWidget {
-  const LocationScreen({super.key});
+class LocationScreenTest extends StatelessWidget {
+  const LocationScreenTest({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -1,6 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_weather/main.dart';
 import 'package:flutter_weather/models/menu_titles.dart';
 import 'package:provider/provider.dart';
@@ -16,23 +14,16 @@ class HomeScreen extends StatelessWidget {
       child: Center(
         child: ListView(
           children: [
-            const Text(
-              '미래의 날씨 앱에 오신 것을 환영합니다',
-              style: TextStyle(fontSize: 28),
-              textAlign: TextAlign.center,
-              softWrap: true,
-            ),
-            const Card(
-              child: Padding(
-                padding: EdgeInsets.all(20.0),
-                child: Text(
-                  'test',
-                  style: TextStyle(fontSize: 28),
-                  textAlign: TextAlign.center,
-                ),
+            const Padding(
+              padding: EdgeInsets.only(top: 50.0, bottom: 20.0),
+              child: Text(
+                '미래의 날씨 앱에 오신 것을 환영합니다',
+                style: TextStyle(fontSize: 28),
+                textAlign: TextAlign.center,
+                softWrap: true,
               ),
             ),
-            for (String item in appNotifier.menuTitles.titles)
+            for (final MenuItems item in appNotifier.menuTitles.items)
               MenuCard(
                 appNotifier: appNotifier,
                 menu: item,
@@ -52,30 +43,34 @@ class MenuCard extends StatelessWidget {
   });
 
   final WeatherProvider appNotifier;
-  final String menu;
+  final MenuItems menu;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return Card(
       margin: const EdgeInsets.all(10),
       child: DecoratedBox(
         decoration: BoxDecoration(
-          gradient: const LinearGradient(
+          gradient: LinearGradient(
             colors: <Color>[
-              Colors.green,
-              Colors.blue,
+              Colors.green.shade700,
+              Colors.indigo.shade900,
             ],
             stops: <double>[0.2, 0.8],
           ),
-          border: Border.all(color: Colors.black, width: 2),
-          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: Colors.white.withOpacity(0.4),
+            width: 5,
+            strokeAlign: -1,
+          ),
+          borderRadius: BorderRadius.circular(25),
         ),
         child: InkWell(
-          onTap: () => appNotifier.changeIndex(1, menu),
+          onTap: () => appNotifier.changeIndex(menu.index, menu.title),
           child: Padding(
-            padding: const EdgeInsets.all(20.0),
+            padding: const EdgeInsets.all(50.0),
             child: Text(
-              menu,
+              menu.title,
               style: const TextStyle(fontSize: 28, color: Colors.white),
               textAlign: TextAlign.center,
             ),
