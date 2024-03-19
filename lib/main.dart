@@ -34,17 +34,10 @@ class WeatherApp extends StatelessWidget {
 }
 
 class WeatherProvider with ChangeNotifier {
-  int _selectedIndex = 0;
-  String _appBarTitle = 'Home';
+  MenuTitles selectedItem = MenuTitles.home;
 
-  int get selectedIndex => _selectedIndex;
-  String get appBarTitle => _appBarTitle;
-
-  final MenuTitles menuTitles = MenuTitles(items: MenuTitles.defaultItems);
-
-  void changeIndex(int index, String title) {
-    _selectedIndex = index;
-    _appBarTitle = title;
+  void changeItem(MenuTitles item) {
+    selectedItem = item;
     notifyListeners();
   }
 }
@@ -59,28 +52,19 @@ class WeatherState extends StatefulWidget {
 class _WeatherState extends State<WeatherState> {
   @override
   Widget build(BuildContext context) {
-    WeatherProvider appNotifier = context.watch<WeatherProvider>();
+    final appNotifier = context.watch<WeatherProvider>();
+
     return Scaffold(
       appBar: AppBar(
-        title: Text(appNotifier.appBarTitle),
+        title: Text(appNotifier.selectedItem.title),
       ),
       drawer: const DrawerMenu(),
-      body: LayoutBuilder(
-        builder: (BuildContext context, BoxConstraints constraints) {
-          switch (appNotifier.selectedIndex) {
-            case 0:
-              return const HomeScreen();
-            case 1:
-              return const LocationScreenTest();
-            case 2:
-              return const WeatherScreen();
-            default:
-              return const Center(
-                child: Text('No screen'),
-              );
-          }
-        },
-      ),
+      body: switch (appNotifier.selectedItem.index) {
+        0 => const HomeScreen(),
+        1 => const LocationScreenTest(),
+        2 => const WeatherScreen(),
+        _ => const Center(child: Text('No screen')),
+      },
     );
   }
 }
@@ -100,7 +84,7 @@ class DrawerMenu extends StatelessWidget {
               child: Text('Weather App'),
             ),
           ),
-          for (final MenuItems item in appNotifier.menuTitles.items)
+          for (final item in MenuTitles.values)
             ListTile(
               leading: Icon(
                 item.icon,
@@ -111,7 +95,7 @@ class DrawerMenu extends StatelessWidget {
                 style: const TextStyle(fontSize: 16),
               ),
               onTap: () {
-                appNotifier.changeIndex(item.index, item.title);
+                appNotifier.changeItem(item);
                 Navigator.pop(context);
               },
             ),

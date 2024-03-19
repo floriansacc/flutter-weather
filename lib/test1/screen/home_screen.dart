@@ -9,7 +9,6 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    WeatherProvider appNotifier = context.watch<WeatherProvider>();
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Center(
@@ -24,11 +23,7 @@ class HomeScreen extends StatelessWidget {
                 softWrap: true,
               ),
             ),
-            for (final MenuItems item in appNotifier.menuTitles.items)
-              MenuCard(
-                appNotifier: appNotifier,
-                menu: item,
-              ),
+            for (final item in MenuTitles.values) MenuCard(item: item),
           ],
         ),
       ),
@@ -37,20 +32,14 @@ class HomeScreen extends StatelessWidget {
 }
 
 class MenuCard extends StatelessWidget {
-  const MenuCard({
-    super.key,
-    required this.appNotifier,
-    required this.menu,
-  });
+  const MenuCard({super.key, required this.item});
 
-  final WeatherProvider appNotifier;
-  final MenuItems menu;
+  final MenuTitles item;
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
       child: DecoratedBox(
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -68,7 +57,8 @@ class MenuCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(25),
         ),
         child: InkWell(
-          onTap: () => appNotifier.changeIndex(menu.index, menu.title),
+          onTap: () => Provider.of<WeatherProvider>(context, listen: false)
+              .changeItem(item),
           child: Stack(
             children: <Widget>[
               Align(
@@ -76,8 +66,8 @@ class MenuCard extends StatelessWidget {
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Icon(
-                    menu.icon,
-                    color: theme.colorScheme.primaryContainer,
+                    item.icon,
+                    color: Theme.of(context).colorScheme.primaryContainer,
                     size: 40,
                   ),
                 ),
@@ -86,7 +76,7 @@ class MenuCard extends StatelessWidget {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 20, vertical: 50),
                 child: Text(
-                  menu.title,
+                  item.title,
                   style: const TextStyle(fontSize: 28, color: Colors.white),
                   textAlign: TextAlign.center,
                 ),
