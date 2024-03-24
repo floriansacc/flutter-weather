@@ -34,6 +34,8 @@ jobs:
           flutter --version
       - name: Prepare dependencies
         run: flutter pub get
+      - name: Generate
+        run: flutter pub run build_runner build --delete-conflicting-outputs
       - name: Analyse the repo
         run: flutter analyze lib
       - name: Run tests

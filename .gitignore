@@ -46,4 +46,7 @@ app.*.map.json
 .fvm/
 .fvmrc
 
+# Ignoring generated files, as they pollute pull requests and can create merge conflicts
+*.g.dart
+
 .env

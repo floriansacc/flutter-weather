@@ -1,15 +1,14 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:flutter_weather/models/coordinates.dart';
-import 'package:flutter_weather/models/forecast.dart';
-import 'package:flutter_weather/services/geo_service.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_weather/models/weather_location.dart';
+import 'package:flutter_weather/providers/locations.dart';
+import 'package:flutter_weather/widgets/add_form_popup.dart';
 import 'package:intl/intl.dart';
 
 void main() async {
   await dotenv.load(fileName: '.env');
-  runApp(const WeatherApp());
+  runApp(const ProviderScope(child: WeatherApp()));
 }
 
 class WeatherApp extends StatelessWidget {
@@ -29,78 +28,50 @@ class WeatherApp extends StatelessWidget {
   }
 }
 
-class Root extends StatelessWidget {
+class Root extends ConsumerWidget {
   const Root({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final locations = ref.watch(locationsProvider);
+
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('Home Weather'),
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.add),
-              onPressed: () {},
-            )
-          ],
-        ),
-        body: ListView(
-          children: [
-            LocationCard(
-              location: Location.test,
+      appBar: AppBar(
+        title: const Text('Weather'),
+        actions: [
+          IconButton(
+            onPressed: () => showDialog(
+              context: context,
+              builder: (BuildContext context) => const AddLocationDialog(),
             ),
-            LocationCard(
-              location: Location.test,
-            ),
-            LocationCard(
-              location: Location.test,
-            ),
-            LocationCard(
-              location: Location.test,
-            ),
-            LocationCard(
-              location: Location.test,
-            ),
-            LocationCard(
-              location: Location.test,
-            ),
-            LocationCard(
-              location: Location.test,
-            ),
-          ],
-        ));
+            icon: const Icon(Icons.add),
+          ),
+        ],
+      ),
+      body: ListView.builder(
+        padding: const EdgeInsets.symmetric(horizontal: 18),
+        itemCount: locations.length,
+        itemBuilder: (context, index) {
+          final item = locations[index];
+
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(item.isCurrent ? 'My Location' : item.name),
+              const SizedBox(width: 8),
+              Column(
+                children: [
+                  Text('${item.forecast?.temp} celcius'),
+                  const SizedBox(height: 8),
+                  Icon(item.conditions?.first.type?.icon),
+                ],
+              ),
+            ],
+          );
+        },
+      ),
+    );
   }
-}
-
-class Location {
-  const Location({
-    required this.cityName,
-    required this.countryName,
-    required this.coord,
-    this.weather,
-    this.localTime,
-  });
-
-  final String cityName;
-  final String countryName;
-  final Coord coord;
-  final Weather? weather;
-  final DateTime? localTime;
-
-  Location.test2()
-      : cityName = 'Seoul',
-        countryName = 'South Korea',
-        coord = Coord(lat: 0.1, long: 0.1),
-        localTime = DateTime.now(),
-        weather = null;
-
-  static Location get test => Location(
-        cityName: 'Seoul',
-        countryName: 'South Korea',
-        coord: const Coord(lat: 0.1, long: 0.1),
-        localTime: DateTime.now(),
-        weather: null,
-      );
 }
 
 class LocationCard extends StatelessWidget {
@@ -109,16 +80,16 @@ class LocationCard extends StatelessWidget {
     required this.location,
   });
 
-  final Location location;
+  final WeatherLocation location;
 
   @override
   Widget build(BuildContext context) {
-    final bool isLoaded = location.weather != null;
+    final bool isLoaded = location.forecast != null;
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        gradient: location.weather?.conditions.first.type?.background ??
+        gradient: location.conditions?.first.type?.background ??
             const LinearGradient(colors: [Colors.red, Colors.blue]),
         borderRadius: BorderRadius.circular(30),
       ),
@@ -131,7 +102,7 @@ class LocationCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                location.cityName,
+                location.name,
                 style: const TextStyle(
                   fontWeight: FontWeight.w500,
                   fontSize: 40,
@@ -139,7 +110,7 @@ class LocationCard extends StatelessWidget {
                 ),
               ),
               Text(
-                DateFormat.Hm().format(location.localTime ?? DateTime.now()),
+                DateFormat.Hm().format(DateTime.now()),
                 style: const TextStyle(
                   fontWeight: FontWeight.w500,
                   fontSize: 24,
@@ -152,7 +123,7 @@ class LocationCard extends StatelessWidget {
             Column(
               children: [
                 Text(
-                  '${location.weather?.forecast.temp}°',
+                  '${location.forecast?.temp}°',
                   style: TextStyle(
                     fontWeight: FontWeight.w300,
                     fontSize: 60,
@@ -197,44 +168,6 @@ class LocationCard extends StatelessWidget {
             )
         ],
       ),
-    );
-  }
-}
-
-class WeatherDisplay extends StatelessWidget {
-  const WeatherDisplay({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return FutureBuilder<Weather?>(
-      future: GeoService().fetchCurrentCoordWeather(),
-      builder: (BuildContext context, AsyncSnapshot<Weather?> snapshot) {
-        final weather = snapshot.data;
-
-        // Future done with no errors
-        if (snapshot.connectionState == ConnectionState.done &&
-            !snapshot.hasError &&
-            weather != null) {
-          return Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text('${weather.forecast.temp} celcius'),
-              const SizedBox(width: 8),
-              Icon(weather.conditions.first.type?.icon),
-            ],
-          );
-        }
-
-        // Future with some errors
-        else if (snapshot.connectionState == ConnectionState.done &&
-            snapshot.hasError) {
-          return Text('The error ${snapshot.error} occured');
-        }
-
-        return const CircularProgressIndicator();
-      },
     );
   }
 }

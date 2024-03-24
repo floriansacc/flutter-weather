@@ -22,6 +22,8 @@ environment:
   flutter: ">=3.19.3"
   sdk: ">=3.3.1 <4.0.0"
 
+isar_version: &isar_version 3.1.0 # define the version to be used
+
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
 # consider running `flutter pub upgrade --major-versions`. Alternatively,
@@ -32,9 +34,11 @@ dependencies:
   flutter:
     sdk: flutter
 
-  # The following adds the Cupertino Icons font to your application.
-  # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.6
+  flutter_riverpod: ^2.5.1 # provider
+
+  # local database
+  isar: *isar_version
+  isar_flutter_libs: *isar_version # contains Isar Core
 
   # service
   geolocator: ^11.0.0
@@ -43,12 +47,16 @@ dependencies:
   flutter_dotenv: ^5.1.0
   logger: ^2.1.0
   http: ^1.2.1
+  path_provider: ^2.1.2 # get application directory to save db
   intl: ^0.19.0
   flutter_slidable: ^3.1.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
+  isar_generator: *isar_version
+  build_runner: ^2.4.8
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
