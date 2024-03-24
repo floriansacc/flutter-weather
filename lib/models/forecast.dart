@@ -34,7 +34,7 @@ class Forecast {
 }
 
 class Weather {
-  Weather({
+  const Weather({
     required this.coord,
     required this.conditions,
     required this.forecast,
