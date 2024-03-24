@@ -48,6 +48,8 @@ dependencies:
   logger: ^2.1.0
   http: ^1.2.1
   path_provider: ^2.1.2 # get application directory to save db
+  intl: ^0.19.0
+  flutter_slidable: ^3.1.0
 
 dev_dependencies:
   flutter_test:

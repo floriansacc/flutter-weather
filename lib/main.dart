@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_weather/providers/locations.dart';
 import 'package:flutter_weather/widgets/add_form_popup.dart';
 
+import 'widgets/location_card.dart';
+
 void main() async {
   await dotenv.load(fileName: '.env');
   runApp(const ProviderScope(child: WeatherApp()));
@@ -52,20 +54,7 @@ class Root extends ConsumerWidget {
         itemBuilder: (context, index) {
           final item = locations[index];
 
-          return Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(item.isCurrent ? 'My Location' : item.name),
-              const SizedBox(width: 8),
-              Column(
-                children: [
-                  Text('${item.forecast?.temp} celcius'),
-                  const SizedBox(height: 8),
-                  Icon(item.conditions?.first.type?.icon),
-                ],
-              ),
-            ],
-          );
+          return LocationCard(location: item);
         },
       ),
     );
