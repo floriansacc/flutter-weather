@@ -1,5 +1,3 @@
-// ignore_for_file: curly_braces_in_flow_control_structures
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_weather/models/weather_location.dart';
 import 'package:flutter_weather/services/weather_service.dart';
@@ -30,13 +28,14 @@ class WeatherLocationsProvider extends StateNotifier<List<WeatherLocation>> {
 
   Future<void> _setAllWeathers() async {
     final tempList = [...state];
+    if (tempList.isEmpty) return;
     final weatherList = await WeatherService().fetchWeatherList(tempList);
 
     if (weatherList == null) return;
 
-    if (state.isNotEmpty && state.first.isCurrent)
+    if (state.isNotEmpty && state.first.isCurrent) {
       state = [state.first, ...weatherList];
-    else {
+    } else {
       state = [...weatherList];
     }
   }
@@ -62,34 +61,49 @@ class WeatherLocationsProvider extends StateNotifier<List<WeatherLocation>> {
     ];
   }
 
-  Future<void> addWeatherLocation(WeatherLocation weatherLocation) async {
+  Future<void> addWeatherByName(String name) async {
     final isar = _isar;
     if (isar == null) return;
+
+    final weatherLocation =
+        await WeatherService().fetchCurrentWeatherByName(name);
+
+    if (weatherLocation == null) return;
 
     await isar.writeTxn(() async {
       await isar.weatherLocations.put(weatherLocation);
     });
-
-    final index = state.length; // future index of inserted WeatherLocation
     state = [...state, weatherLocation];
-
-    // fetch the weather for this new WeatherLocation
-    WeatherService()
-        .fetchCurrentWeather(weatherLocation.coord)
-        .then((weather) async {
-      if (weather == null) return;
-
-      // update state and database
-      await isar.writeTxn(() async {
-        weatherLocation.conditions = weather.conditions;
-        weatherLocation.forecast = weather.forecast;
-        await isar.weatherLocations.put(weatherLocation);
-        final tempState = [...state];
-        tempState[index] = weatherLocation;
-        state = tempState;
-      });
-    });
   }
+
+  // Future<void> addWeatherLocation(WeatherLocation weatherLocation) async {
+  //   final isar = _isar;
+  //   if (isar == null) return;
+
+  //   await isar.writeTxn(() async {
+  //     await isar.weatherLocations.put(weatherLocation);
+  //   });
+
+  //   final index = state.length; // future index of inserted WeatherLocation
+  //   state = [...state, weatherLocation];
+
+  //   // fetch the weather for this new WeatherLocation
+  //   WeatherService()
+  //       .fetchCurrentWeatherByCoord(weatherLocation.coord)
+  //       .then((weather) async {
+  //     if (weather == null) return;
+
+  //     // update state and database
+  //     await isar.writeTxn(() async {
+  //       weatherLocation.conditions = weather.conditions;
+  //       weatherLocation.forecast = weather.forecast;
+  //       await isar.weatherLocations.put(weatherLocation);
+  //       final tempState = [...state];
+  //       tempState[index] = weatherLocation;
+  //       state = tempState;
+  //     });
+  //   });
+  // }
 
   Future<bool> removeWeatherLocation(WeatherLocation weatherLocation) async {
     // cannot delete current location

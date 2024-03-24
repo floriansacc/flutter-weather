@@ -10,21 +10,33 @@ class WeatherService extends GlobalService {
   Future<WeatherLocation?> fetchCurrentCoordWeather() async {
     try {
       final coord = await GeoLocator().getCoordinates();
-      return fetchCurrentWeather(coord);
+      return fetchCurrentWeatherByCoord(coord);
     } catch (e, s) {
       errorLog(e, s);
       return null;
     }
   }
 
-  Future<WeatherLocation?> fetchCurrentWeather(Coord coordinates) async {
+  Future<WeatherLocation?> fetchCurrentWeatherByName(String name) =>
+      _fetchCurrentWeather(name, null);
+
+  Future<WeatherLocation?> fetchCurrentWeatherByCoord(Coord coordinates) =>
+      _fetchCurrentWeather(null, coordinates);
+
+  Future<WeatherLocation?> _fetchCurrentWeather([
+    String? name,
+    Coord? coordinates,
+  ]) async {
     final response = await httpRequest(
       HttpMethod.get,
       ApiVersion.v25,
       '/weather',
       queryParameters: {
-        'lat': coordinates.lat.toString(),
-        'lon': coordinates.long.toString(),
+        if (name != null) ...{'q': name},
+        if (coordinates != null) ...{
+          'lat': coordinates.lat.toString(),
+          'lon': coordinates.long.toString(),
+        },
       },
     );
 
@@ -39,7 +51,9 @@ class WeatherService extends GlobalService {
     }
   }
 
-  Future<List<WeatherLocation>?> fetchWeatherList(List<WeatherLocation> locations) async {
+  Future<List<WeatherLocation>?> fetchWeatherList(
+    List<WeatherLocation> locations,
+  ) async {
     final response = await httpRequest(
       HttpMethod.get,
       ApiVersion.v25,
