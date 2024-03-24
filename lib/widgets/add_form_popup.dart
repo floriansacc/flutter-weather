@@ -37,7 +37,6 @@ class _AddLocationDialogState extends ConsumerState<AddLocationDialog> {
       actions: [
         ElevatedButton(
           onPressed: () {
-            print('ok ${controller.text}');
             if (controller.text.isEmpty) return;
             ref
                 .read(locationsProvider.notifier)
