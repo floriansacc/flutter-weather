@@ -1,19 +1,21 @@
+// ignore_for_file: curly_braces_in_flow_control_structures
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_weather/models/location.dart';
+import 'package:flutter_weather/models/weather_location.dart';
 import 'package:flutter_weather/services/weather_service.dart';
 import 'package:isar/isar.dart';
 import 'package:path_provider/path_provider.dart';
 
 final locationsProvider =
-    StateNotifierProvider<LocationsProvider, List<Location>>(
-  (_) => LocationsProvider(),
+    StateNotifierProvider<WeatherLocationsProvider, List<WeatherLocation>>(
+  (_) => WeatherLocationsProvider(),
 );
 
-class LocationsProvider extends StateNotifier<List<Location>> {
-  LocationsProvider() : super([]) {
+class WeatherLocationsProvider extends StateNotifier<List<WeatherLocation>> {
+  WeatherLocationsProvider() : super([]) {
     _init().then((value) async {
-      _addCurrentLocation();
       _setAllWeathers();
+      _addCurrentWeatherLocation();
     });
   }
 
@@ -21,17 +23,25 @@ class LocationsProvider extends StateNotifier<List<Location>> {
 
   Future<void> _init() async {
     final dir = await getApplicationSupportDirectory();
-    final isar = await Isar.open([LocationSchema], directory: dir.path);
+    final isar = await Isar.open([WeatherLocationSchema], directory: dir.path);
     _isar = isar;
-    state = await isar.locations.where().findAll();
+    state = await isar.weatherLocations.where().findAll();
   }
 
   Future<void> _setAllWeathers() async {
-    // TODO: request WeatherService().fetchCurrentWeather for each location
-    //       or find an endpoint that supports multiple coordinates
+    final tempList = [...state];
+    final weatherList = await WeatherService().fetchWeatherList(tempList);
+
+    if (weatherList == null) return;
+
+    if (state.isNotEmpty && state.first.isCurrent)
+      state = [state.first, ...weatherList];
+    else {
+      state = [...weatherList];
+    }
   }
 
-  Future<void> _addCurrentLocation() async {
+  Future<void> _addCurrentWeatherLocation() async {
     final isar = _isar;
     if (isar == null) return;
 
@@ -40,50 +50,58 @@ class LocationsProvider extends StateNotifier<List<Location>> {
     if (currentWeather == null) return;
 
     state = [
-      Location(
-        cityName: 'Current Location',
-        countryName: 'Current Location',
+      WeatherLocation(
+        locId: currentLocId,
+        name: currentWeather.name,
+        timezone: currentWeather.timezone,
         coord: currentWeather.coord,
-        weather: currentWeather,
+        conditions: currentWeather.conditions,
+        forecast: currentWeather.forecast,
       ),
       ...state,
     ];
   }
 
-  Future<void> addLocation(Location location) async {
+  Future<void> addWeatherLocation(WeatherLocation weatherLocation) async {
     final isar = _isar;
     if (isar == null) return;
 
     await isar.writeTxn(() async {
-      await isar.locations.put(location);
+      await isar.weatherLocations.put(weatherLocation);
     });
 
-    final index = state.length; // future index of inserted location
-    state = [...state, location];
+    final index = state.length; // future index of inserted WeatherLocation
+    state = [...state, weatherLocation];
 
-    // fetch the weather for this new location
-    WeatherService().fetchCurrentWeather(location.coord).then((weather) async {
+    // fetch the weather for this new WeatherLocation
+    WeatherService()
+        .fetchCurrentWeather(weatherLocation.coord)
+        .then((weather) async {
       if (weather == null) return;
 
       // update state and database
       await isar.writeTxn(() async {
-        location.weather = weather;
-        await isar.locations.put(location);
+        weatherLocation.conditions = weather.conditions;
+        weatherLocation.forecast = weather.forecast;
+        await isar.weatherLocations.put(weatherLocation);
         final tempState = [...state];
-        tempState[index] = location;
+        tempState[index] = weatherLocation;
         state = tempState;
       });
     });
   }
 
-  Future<bool> removeLocation(int index, Location location) async {
+  Future<bool> removeWeatherLocation(WeatherLocation weatherLocation) async {
+    // cannot delete current location
+    if (weatherLocation.isCurrent) return false;
+
     final isar = _isar;
     if (isar == null) return false;
 
-    final success = await isar.locations.delete(location.id);
+    final success = await isar.weatherLocations.delete(weatherLocation.id);
     if (success) {
       final tempState = [...state];
-      final index = tempState.indexWhere((e) => e.id == location.id);
+      final index = tempState.indexWhere((e) => e.id == weatherLocation.id);
       if (index == -1) return success;
       tempState.removeAt(index);
       state = tempState;

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:flutter_weather/models/forecast.dart';
-import 'package:flutter_weather/services/weather_service.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_weather/providers/locations.dart';
 
 void main() async {
   await dotenv.load(fileName: '.env');
-  runApp(const WeatherApp());
+  runApp(const ProviderScope(child: WeatherApp()));
 }
 
 class WeatherApp extends StatelessWidget {
@@ -25,40 +25,35 @@ class WeatherApp extends StatelessWidget {
   }
 }
 
-class Root extends StatelessWidget {
+class Root extends ConsumerWidget {
   const Root({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final locations = ref.watch(locationsProvider);
+
     return Scaffold(
       appBar: AppBar(title: const Text('Current weather')),
       body: Center(
-        child: FutureBuilder<Weather?>(
-          future: WeatherService().fetchCurrentCoordWeather(),
-          builder: (BuildContext context, AsyncSnapshot<Weather?> snapshot) {
-            final weather = snapshot.data;
+        child: ListView.builder(
+          itemCount: locations.length,
+          itemBuilder: (context, index) {
+            final item = locations[index];
 
-            // Future done with no errors
-            if (snapshot.connectionState == ConnectionState.done &&
-                !snapshot.hasError &&
-                weather != null) {
-              return Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text('${weather.forecast.temp} celcius'),
-                  const SizedBox(width: 8),
-                  Icon(weather.conditions.first.type?.icon),
-                ],
-              );
-            }
-
-            // Future with some errors
-            else if (snapshot.connectionState == ConnectionState.done &&
-                snapshot.hasError) {
-              return Text('The error ${snapshot.error} occured');
-            }
-
-            return const CircularProgressIndicator();
+            return Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(item.name),
+                const SizedBox(width: 8),
+                Column(
+                  children: [
+                    Text('${item.forecast?.temp} celcius'),
+                    const SizedBox(height: 8),
+                    Icon(item.conditions?.first.type?.icon),
+                  ],
+                ),
+              ],
+            );
           },
         ),
       ),
