@@ -6,7 +6,7 @@ import 'package:flutter_weather/services/geo_locator.dart';
 import 'package:flutter_weather/services/global_service.dart';
 import 'package:flutter_weather/shared/utils/logger.dart';
 
-class GeoService extends GlobalService {
+class WeatherService extends GlobalService {
   Future<Weather?> fetchCurrentCoordWeather() async {
     try {
       final coord = await GeoLocator().getCoordinates();

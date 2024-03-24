@@ -16,11 +16,11 @@ class Location {
     this.localTime,
   });
 
-  final String cityName;
-  final String countryName;
-  final Coord coord;
+  String cityName;
+  String countryName;
+  Coord coord;
   @ignore
-  final Weather? weather;
+  Weather? weather;
   @ignore
-  final DateTime? localTime;
+  DateTime? localTime;
 }

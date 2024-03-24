@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_weather/models/forecast.dart';
-import 'package:flutter_weather/services/geo_service.dart';
+import 'package:flutter_weather/services/weather_service.dart';
 
 void main() async {
   await dotenv.load(fileName: '.env');
@@ -34,7 +34,7 @@ class Root extends StatelessWidget {
       appBar: AppBar(title: const Text('Current weather')),
       body: Center(
         child: FutureBuilder<Weather?>(
-          future: GeoService().fetchCurrentCoordWeather(),
+          future: WeatherService().fetchCurrentCoordWeather(),
           builder: (BuildContext context, AsyncSnapshot<Weather?> snapshot) {
             final weather = snapshot.data;
 
