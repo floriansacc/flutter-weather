@@ -1,6 +1,3 @@
-import 'package:flutter_weather/models/coordinates.dart';
-import 'package:flutter_weather/models/weather_condition.dart';
-
 class Forecast {
   const Forecast({
     // required this.sunrise,
@@ -24,31 +21,11 @@ class Forecast {
     return Forecast(
       // sunrise: DateTime.fromMicrosecondsSinceEpoch(json["sunrise"]),
       // sunset: DateTime.fromMicrosecondsSinceEpoch(json["sunset"]),
-      temp: json['temp'],
-      feelsLike: json['feels_like'],
-      humidity: json['humidity'],
-      tempMin: json['temp_min'],
-      tempMax: json['temp_max'],
-    );
-  }
-}
-
-class Weather {
-  Weather({
-    required this.coord,
-    required this.conditions,
-    required this.forecast,
-  });
-
-  final Coord coord;
-  final List<WeatherConditions> conditions;
-  final Forecast forecast;
-
-  static Weather fromJson(Map<String, dynamic> json) {
-    return Weather(
-      forecast: Forecast.fromJson(json['main']),
-      conditions: WeatherConditions.fromJsonList(json['weather']),
-      coord: Coord.fromJson(json['coord']),
+      temp: double.parse(json['temp'].toString()),
+      feelsLike: double.parse(json['feels_like'].toString()),
+      humidity: int.parse(json['humidity'].toString()),
+      tempMin: double.parse(json['temp_min'].toString()),
+      tempMax: double.parse(json['temp_max'].toString()),
     );
   }
 }

@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:flutter_weather/models/forecast.dart';
-import 'package:flutter_weather/services/geo_service.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_weather/providers/locations.dart';
+import 'package:flutter_weather/widgets/add_form_popup.dart';
 
 void main() async {
   await dotenv.load(fileName: '.env');
-  runApp(const WeatherApp());
+  runApp(const ProviderScope(child: WeatherApp()));
 }
 
 class WeatherApp extends StatelessWidget {
@@ -25,42 +26,47 @@ class WeatherApp extends StatelessWidget {
   }
 }
 
-class Root extends StatelessWidget {
+class Root extends ConsumerWidget {
   const Root({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final locations = ref.watch(locationsProvider);
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Current weather')),
-      body: Center(
-        child: FutureBuilder<Weather?>(
-          future: GeoService().fetchCurrentCoordWeather(),
-          builder: (BuildContext context, AsyncSnapshot<Weather?> snapshot) {
-            final weather = snapshot.data;
+      appBar: AppBar(
+        title: const Text('Weather'),
+        actions: [
+          IconButton(
+            onPressed: () => showDialog(
+              context: context,
+              builder: (BuildContext context) => const AddLocationDialog(),
+            ),
+            icon: const Icon(Icons.add),
+          ),
+        ],
+      ),
+      body: ListView.builder(
+        padding: const EdgeInsets.symmetric(horizontal: 18),
+        itemCount: locations.length,
+        itemBuilder: (context, index) {
+          final item = locations[index];
 
-            // Future done with no errors
-            if (snapshot.connectionState == ConnectionState.done &&
-                !snapshot.hasError &&
-                weather != null) {
-              return Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(item.isCurrent ? 'My Location' : item.name),
+              const SizedBox(width: 8),
+              Column(
                 children: [
-                  Text('${weather.forecast.temp} celcius'),
-                  const SizedBox(width: 8),
-                  Icon(weather.conditions.first.type?.icon),
+                  Text('${item.forecast?.temp} celcius'),
+                  const SizedBox(height: 8),
+                  Icon(item.conditions?.first.type?.icon),
                 ],
-              );
-            }
-
-            // Future with some errors
-            else if (snapshot.connectionState == ConnectionState.done &&
-                snapshot.hasError) {
-              return Text('The error ${snapshot.error} occured');
-            }
-
-            return const CircularProgressIndicator();
-          },
-        ),
+              ),
+            ],
+          );
+        },
       ),
     );
   }
