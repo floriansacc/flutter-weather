@@ -1,16 +1,26 @@
 import 'package:flutter_weather/models/coordinates.dart';
 import 'package:flutter_weather/models/forecast.dart';
+import 'package:isar/isar.dart';
 
+part 'location.g.dart';
+
+@collection
 class Location {
-  const Location({
+  Id id = Isar.autoIncrement; // you can also use id = null to auto increment
+
+  Location({
     required this.cityName,
     required this.countryName,
     required this.coord,
-    required this.weather,
+    this.weather,
+    this.localTime,
   });
 
   final String cityName;
   final String countryName;
   final Coord coord;
-  final Weather weather;
+  @ignore
+  final Weather? weather;
+  @ignore
+  final DateTime? localTime;
 }
