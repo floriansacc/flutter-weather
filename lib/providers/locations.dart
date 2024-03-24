@@ -112,10 +112,11 @@ class WeatherLocationsProvider extends StateNotifier<List<WeatherLocation>> {
     final isar = _isar;
     if (isar == null) return false;
 
-    final success = await isar.weatherLocations.delete(weatherLocation.id);
+    final success = await isar.weatherLocations.delete(weatherLocation.locId);
     if (success) {
       final tempState = [...state];
-      final index = tempState.indexWhere((e) => e.id == weatherLocation.id);
+      final index =
+          tempState.indexWhere((e) => e.locId == weatherLocation.locId);
       if (index == -1) return success;
       tempState.removeAt(index);
       state = tempState;

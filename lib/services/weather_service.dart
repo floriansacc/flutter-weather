@@ -58,15 +58,17 @@ class WeatherService extends GlobalService {
       HttpMethod.get,
       ApiVersion.v25,
       '/group',
-      queryParameters: {'id': locations.map((e) => e.id).join(',')},
+      queryParameters: {
+        'id': locations.map((e) => e.locId.toString()).join(','),
+      },
     );
 
     if (response.statusCode != 200) return null;
 
     try {
-      final list = jsonDecode(response.body);
-      if (list == null) return null;
-      return WeatherLocation.fromJsonList(list);
+      final json = jsonDecode(response.body);
+      // ignore: avoid_dynamic_calls
+      return WeatherLocation.fromJsonList(json['list']);
     } catch (e) {
       errorLog(e);
       return null;
