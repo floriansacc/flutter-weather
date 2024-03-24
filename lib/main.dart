@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_weather/models/weather_location.dart';
 import 'package:flutter_weather/providers/locations.dart';
 import 'package:flutter_weather/widgets/add_form_popup.dart';
-import 'package:intl/intl.dart';
 
 import 'widgets/location_card.dart';
 
