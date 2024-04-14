@@ -17,21 +17,13 @@ class LocationCard extends ConsumerStatefulWidget {
 }
 
 class _LocationCardState extends ConsumerState<LocationCard> {
-  @override
-  void initState() {
-    super.initState();
-    // "ref" can be used in all life-cycles of a StatefulWidget.
-    ref.read(locationsProvider);
-  }
-
+  final GlobalKey key = GlobalKey();
   @override
   Widget build(BuildContext context) {
-    final GlobalKey key = GlobalKey();
     final bool isLoadedForecast = widget.location.forecast != null;
     final bool isLoadedCond = widget.location.conditions != null;
     return ClipRRect(
-      // clipBehavior: Clip.hardEdge,
-      borderRadius: BorderRadius.circular(30.0),
+      borderRadius: const BorderRadius.all(Radius.circular(30)),
       child: Dismissible(
         key: key,
         direction: DismissDirection.endToStart,
@@ -39,7 +31,6 @@ class _LocationCardState extends ConsumerState<LocationCard> {
             .read(locationsProvider.notifier)
             .removeWeatherLocation(widget.location),
         background: Container(
-          margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
           padding: const EdgeInsets.all(16),
           color: Colors.red.shade300,
           child: const Row(
@@ -59,7 +50,7 @@ class _LocationCardState extends ConsumerState<LocationCard> {
                   Text(
                     'Delete',
                     style: TextStyle(fontSize: 24, color: Colors.white),
-                  )
+                  ),
                 ],
               ),
             ],
@@ -67,12 +58,10 @@ class _LocationCardState extends ConsumerState<LocationCard> {
         ),
         child: Container(
           // clipBehavior: Clip.hardEdge,
-          margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             gradient: widget.location.conditions?.first.type?.background ??
                 const LinearGradient(colors: [Colors.red, Colors.blue]),
-            borderRadius: BorderRadius.circular(30),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.max,
@@ -132,7 +121,9 @@ class _LocationCardState extends ConsumerState<LocationCard> {
                             color: Colors.white,
                             shadows: [
                               Shadow(
-                                  color: Colors.grey.shade600, blurRadius: 10),
+                                color: Colors.grey.shade600,
+                                blurRadius: 10,
+                              ),
                             ],
                           ),
                         ),
@@ -144,16 +135,18 @@ class _LocationCardState extends ConsumerState<LocationCard> {
                             color: Colors.white,
                             shadows: [
                               Shadow(
-                                  color: Colors.grey.shade600, blurRadius: 10),
+                                color: Colors.grey.shade600,
+                                blurRadius: 10,
+                              ),
                             ],
                           ),
-                        )
+                        ),
                       ],
                     ),
                   ],
                 )
               else
-                CircularProgressIndicator(),
+                const CircularProgressIndicator(),
             ],
           ),
         ),

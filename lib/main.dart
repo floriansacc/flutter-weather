@@ -54,7 +54,12 @@ class Root extends ConsumerWidget {
         itemBuilder: (context, index) {
           final item = locations[index];
 
-          return LocationCard(location: item);
+          return Column(
+            children: [
+              LocationCard(location: item),
+              const SizedBox(height: 16),
+            ],
+          );
         },
       ),
     );
