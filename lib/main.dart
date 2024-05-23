@@ -3,6 +3,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_weather/providers/locations.dart';
 import 'package:flutter_weather/widgets/add_form_popup.dart';
+import 'package:flutter_weather/widgets/location_card_test.dart';
 
 import 'widgets/location_card.dart';
 
@@ -56,7 +57,7 @@ class Root extends ConsumerWidget {
 
           return Column(
             children: [
-              LocationCard(location: item),
+              LocationCardTest(location: item, index: index),
               const SizedBox(height: 16),
             ],
           );
