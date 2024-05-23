@@ -3,6 +3,9 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_weather/providers/locations.dart';
 import 'package:flutter_weather/widgets/add_form_popup.dart';
+import 'package:flutter_weather/widgets/location_card_test.dart';
+
+import 'widgets/location_card.dart';
 
 void main() async {
   await dotenv.load(fileName: '.env');
@@ -52,18 +55,10 @@ class Root extends ConsumerWidget {
         itemBuilder: (context, index) {
           final item = locations[index];
 
-          return Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          return Column(
             children: [
-              Text(item.isCurrent ? 'My Location' : item.name),
-              const SizedBox(width: 8),
-              Column(
-                children: [
-                  Text('${item.forecast?.temp} celcius'),
-                  const SizedBox(height: 8),
-                  Icon(item.conditions?.first.type?.icon),
-                ],
-              ),
+              LocationCardTest(location: item, index: index),
+              const SizedBox(height: 16),
             ],
           );
         },
